@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  
+  annotator:
+    build: ../annotator
+    volumes:
+      - ../annotator:/code
+    ports:
+      - 5555:5555
+    hostname: backend-service
+  
+  ui-jinja:
+    build: ../ui-jinja
+    volumes:
+      - ../ui-jinja:/code
+    ports:
+      - 8080:8080
+    depends_on:
+      - annotator
+    environment:
+      PYTHONUNBUFFERED: ${PYTHONUNBUFFERED}
+  
+  annotator_prediction:
+    build: ../annotator_prediction
+    volumes:
+      - ../annotator_prediction:/code
+    ports:
+      - 5050:5050
+  
+  end_user_ui-jinja:
+    build: ../end_user_ui_jinja
+    volumes:
+      - ../end_user_ui_jinja:/code
+    ports:
+      - 8060:8060
+    depends_on:
+      - annotator_prediction
+    environment:
+      PYTHONUNBUFFERED: ${PYTHONUNBUFFERED}
